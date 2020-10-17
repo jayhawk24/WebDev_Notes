@@ -58,6 +58,16 @@
 - create a function in views.py called index.
 - add URL in url pattern .
   
+### URL Mapping
+- create a urls.py file inside app directory which is same as urls.py file in project directory
+- include app.urls.py file in project.urls.py file
+  ```
+  from django.conf.urls import 
+  urlpatterns = [
+    path('yourpath/',include('app.urls')),
+  ]
+  ```
+- include views in app.urls.py file
 ### Add Template
 - add template directory in settings.py after creating a template directory
   
@@ -73,3 +83,4 @@
     myDict = {"insert_me":"This is injected to index.html"}
     return render(request,'first_app/index.html',context=myDict)
   ```
+
