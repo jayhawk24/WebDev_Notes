@@ -57,3 +57,19 @@
 - in views.py file import HttpResponse from django.http.
 - create a function in views.py called index.
 - add URL in url pattern .
+  
+### Add Template
+- add template directory in settings.py after creating a template directory
+  
+  ```
+  import os
+  TEMPLATE_DIR = os.path.join(BASE_DIR,"template's_foldername")
+  ```
+
+- Then create index.html in template folder use {{ insert_me }} to inject dictionary variables.
+- go to views.py in first_app and use this function
+  ```
+  def index(request):
+    myDict = {"insert_me":"This is injected to index.html"}
+    return render(request,'first_app/index.html',context=myDict)
+  ```
