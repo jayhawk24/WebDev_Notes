@@ -84,3 +84,12 @@
     return render(request,'first_app/index.html',context=myDict)
   ```
 
+### Add Static files
+- Add STATIC_DIR variable in project.settings.py as the path for static directory.
+- At the bottom add STATICFILES_DIRS = [STATIC_DIR,] 
+- In index.html below doctype html add template tag as below
+  ```
+  {% load static %}
+  <link rel="stylesheet" href="{% static 'css/style.css'%}">
+  ```
+
