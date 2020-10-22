@@ -12,7 +12,6 @@
     source bin/activate
     pip3 install django
     django-admin startproject name
-    
 ```
 
 #### Config files
@@ -93,3 +92,33 @@
   <link rel="stylesheet" href="{% static 'css/style.css'%}">
   ```
 
+### Add Models
+- to add models we first define classes in models.py file in first_app directory as table names and inside variables as columns like
+  ```
+
+  class Webpage(models.Model):
+      topic = models.ForeignKey(Topic, on_delete=models.CASCADE,)
+      name = models.CharField(max_length=256, unique=True)
+      url = models.URLField(unique=True)
+
+      def __str__(self) -> str:
+          return self.name
+  ```
+- Then run command
+  ```
+  python3 manage.py migrate
+
+  python manage.py makemigrations first_app
+  python manage.py migrate
+  ```
+
+### Add Admin Page
+- import all models from models.py
+- use this command to register
+  ```
+  from first_app.models import *
+
+  admin.site.register(modelname)
+  ```
+- create a super user
+- python3 manage.py createsuperuser
