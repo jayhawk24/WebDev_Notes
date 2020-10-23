@@ -122,3 +122,10 @@
   ```
 - create a super user
 - python3 manage.py createsuperuser
+
+### Connecting Models, Templates, Views
+- In views.py file we import any models that we will need to use.
+- Use the view to query the model for data that we will need
+- pass results from the model to the template.
+- Edit template so that it is ready to accept and display the data from the model.
+- Map a url to the view.
