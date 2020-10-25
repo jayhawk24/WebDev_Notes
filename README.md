@@ -161,3 +161,26 @@ if __name__ == "__main__":
     print("Running scripts")
     populate(int(input("Number of data to be added.")))
 ```
+
+### Adding forms
+- Add form view function in views.py file
+  - ```
+  def formview(request):
+    form = forms.formName()
+
+    if request.method == 'POST':
+        form = forms.formName(request.POST)
+
+        if form.is_valid():
+            print("Validation success")
+            print("Name : "+form.cleaned_data["name"])
+            print("Email : "+form.cleaned_data["email"])
+            print("Text : "+form.cleaned_data["text"])
+
+    return render(request,'forms.html',{'form':form})
+  ```
+- add this view to urls.py file
+- In forms.html file create a form using
+  - ```
+  {{form.as_p}}
+  {% csrf_token %}
