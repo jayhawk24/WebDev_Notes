@@ -129,3 +129,35 @@
 - pass results from the model to the template.
 - Edit template so that it is ready to accept and display the data from the model.
 - Map a url to the view.
+
+### Script to populate models
+```
+from faker import Faker
+import os
+import django
+
+django.setup()
+
+
+from apptwo.models import *
+
+fakegen = Faker()
+
+
+def populate(N=10):
+    for entry in range(N):
+        print(5)
+        fname = fakegen.name().split()[0]
+        lname = fakegen.name().split()[0]
+        email = fakegen.email()
+
+        us = User.objects.get_or_create(
+            firstName=fname,
+            lastName=lname,
+            email=email
+        )[0]
+
+if __name__ == "__main__":
+    print("Running scripts")
+    populate(int(input("Number of data to be added.")))
+```
