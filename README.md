@@ -184,3 +184,36 @@ if __name__ == "__main__":
   - ```
   {{form.as_p}}
   {% csrf_token %}
+  ```
+### Saving Data from forms
+- create a forms.py file inside app. import models
+```
+  from django import forms
+  from apptwo.models import User
+
+
+  class NewUserForm(forms.ModelForm):
+    class Meta:
+        model = User
+        fields = '__all__'
+```
+- Now inside views.py file import Newuserform class created in forms.py file
+
+```
+
+def signup(request):
+
+    form = NewUserForm()
+
+    if request.method == "POST":
+        form = NewUserForm(request.POST)
+
+        if form.is_valid():
+            form.save(commit=True)
+            return index(request)
+        else:
+            print("Invalid Form")
+    
+    return render(request,'signup.html',context={'form':form})
+  
+```
