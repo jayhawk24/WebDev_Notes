@@ -164,7 +164,8 @@ if __name__ == "__main__":
 
 ### Adding forms
 - Add form view function in views.py file
-  - ```
+  
+```
   def formview(request):
     form = forms.formName()
 
@@ -178,13 +179,13 @@ if __name__ == "__main__":
             print("Text : "+form.cleaned_data["text"])
 
     return render(request,'forms.html',{'form':form})
-  ```
+```
 - add this view to urls.py file
 - In forms.html file create a form using
-  - ```
-  {{form.as_p}}
-  {% csrf_token %}
-  ```
+```
+{{form.as_p}}
+{% csrf_token %}
+```
 ### Saving Data from forms
 - create a forms.py file inside app. import models
 ```
@@ -216,4 +217,30 @@ def signup(request):
     
     return render(request,'signup.html',context={'form':form})
   
+```
+
+### Templating Urls
+- {% url 'basic_app:other' %} in html page
+- where basic_app is a variable assigned as app_name inside urls.py file in app folder
+- and other is the name of the page to be directed to it.
+- this name should be defined in urls.py file
+- path('other', views.other, name="other"),
+  
+### Template Inheritance
+- in your base.html file put up all the stuff you would like to inherit and at bottom inside a div container add a template tag
+```
+        {% block body_block %}
+
+        {% endblock %}
+```
+- now in your rest of HTML file all you need to to is after declaring doctype give this
+```
+    {% extends "basic_app/base.html" %}
+    
+    {% block body_block %}
+
+    <h2>Welcome to other</h2>
+    
+    <h3>Inherited </h3>
+    {% endblock %}
 ```
