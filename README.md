@@ -244,3 +244,184 @@ def signup(request):
     <h3>Inherited </h3>
     {% endblock %}
 ```
+### Saving Username and passwords
+- Create a model which will inherit default User model which contains username and password fields.
+  ```
+  from django.db import models
+  from django.contrib.auth.models import User
+
+  class UserProfileInfo(models.Model):
+
+    user = models.OneToOneField(User, on_delete=models.DO_NOTHING)
+    
+    portfolioSite = models.URLField(blank=True)
+
+    profilePic = models.ImageField(upload_to='profilePics', blank=True)
+
+    def __str__(self) -> str:
+        return self.user.username
+  ```
+- Add Password hashers in settings.py 
+```
+PASSWORD_HASHERS = [
+    'django.contrib.auth.hashers.Argon2PasswordHasher',
+    'django.contrib.auth.hashers.BCryptSHA256PasswordHasher',
+    'django.contrib.auth.hashers.BCryptPasswordHasher',
+    'django.contrib.auth.hashers.PBKDF2PasswordHasher',
+    'django.contrib.auth.hashers.PBKDF2SHA1PasswordHasher',
+]
+```
+- In forms.py file 
+```
+from django import forms
+from django.contrib.auth.models import User
+from django.forms import fields
+from basic_app.models import UserProfileInfo
+
+
+class UserForm(forms.ModelForm):
+    password = forms.CharField(widget=forms.PasswordInput())
+
+    class Meta():
+        model = User
+        fields = ("username","email","password")
+
+
+class UserProfileInfoForm(forms.ModelForm):
+    class Meta():
+        model = UserProfileInfo
+        fields = ('portfolioSite','profilePic')
+```
+- In views.py file create a function to save data 
+```
+from django.http import request
+from basic_app.forms import UserForm,UserProfileInfoForm
+from django.shortcuts import render
+
+# Create your views here.
+
+def index(request):
+    return render(request,"index.html")
+
+def register(request):
+    
+    registered = False
+
+    if request.method == 'POST':
+        user_form = UserForm(data=request.POST)
+        profile_form = UserProfileInfoForm(data=request.POST)
+
+        if user_form.is_valid() and profile_form.is_valid():
+
+            user = user_form.save()
+            user.set_password(user.password)
+            user.save()
+
+            profile = profile_form.save(commit=False)
+            profile.user = user
+
+            if 'profile_pic' in request.FILES:
+                profile.profile_pic = request.FILES['profile_pic']
+            
+            registered = True
+    
+        else:
+            print(user_form.errors, profile_form.errors)
+    else:
+        user_form = UserForm()
+        profile_form = UserProfileInfoForm()
+
+    return render(request, 'registration.html',
+                {'user_form':user_form,
+                'profile_form':profile_form,
+                'registered':registered}
+    )
+```
+- In registration.html file
+```
+<!DOCTYPE html>
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block body_block %}
+
+    <div class="jumbotron">
+        {% if registered %}
+        <h1> Thank you for registering!</h1>
+        {% else %}
+        <h3> Fill out the form : </h3>
+
+        <form method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            {{ user_form.as_p}}
+
+            {{ profile_form.as_p }}
+            <input type="submit" name="" value="Register">
+
+
+        </form>     
+        {% endif %}
+
+    </div>
+{% endblock  %}
+```
+### Including User Login
+- imports and functions in views.py
+```
+
+from django.contrib.auth import authenticate,login,logout
+from django.http import HttpResponseRedirect, HttpResponse
+from django.core.urlresolvers import reverse
+from django.contrib.auth.decorators import login_required
+
+
+def user_login (request):
+
+    if request.method == "POST":
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+        user = authenticate(username=username, password=password)
+
+        if user:
+            if user.is_active:
+                login(request, user)
+                return HttpResponseRedirect(reverse('index'))
+
+            else:
+                return HttpResponse("Account not active")
+
+        else:
+            print("Someone tried to login and failed!")
+            print("username: {} and password {}".format(username,password))
+            return HttpResponse("Invalid Login details supplied!")
+    
+    else:
+        return render(request,'login.html',{})
+
+```
+- In login.html
+```
+{% extends 'base.html' %}
+
+{% block body_block %}
+
+<div class="jumbotron">
+    <h1>Please Login
+    </h1>
+    <form action="{% url 'user_login' %}" method="POST">
+        {% csrf_token %}
+
+        <label for="username">Username:</label>
+        <input type="text" name="username" placeholder="Enter Username">
+
+        <label for="password">Password:</label>
+        <input type="password" name="password">
+
+        <input type="submit" name="" value="Login">
+        
+    </form>
+</div>
+
+{% endblock  %}
+```
