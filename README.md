@@ -425,3 +425,41 @@ def user_login (request):
 
 {% endblock  %}
 ```
+
+### Class Based Views
+- We have to first import from jango.views.generic View and TemplateView and then create a class.
+- ```
+  from django.views.generic import View,TemplateView
+
+  class IndexView(TemplateView):
+    template_name = 'index.html'
+
+    def get_context_data(self,**kwargs):
+      context = super().get_context_data(**kwargs)
+      context['tobeinjected'] = "basic injection"
+      return context
+
+  ```
+- Then in urls.py file we declare it as...
+- ```path("", views.IndexView.as_view())```
+
+#### List view and detail view
+- Say we have 2 models namely school and students.
+- we can list the views as...
+```
+from django.views.generic import View,TemplateView,ListView,DetailView
+
+class schoolListView(ListView):
+  model = models.School
+
+  # this returns context dictionary as school_list by default
+  # to change name we can do 
+  context_object_name = "schools"
+
+
+class schoolDetailView(DetailView):
+  model = models.School
+  template_name = 'school.html'
+
+
+```
