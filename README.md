@@ -463,3 +463,6 @@ class schoolDetailView(DetailView):
 
 
 ```
+
+### To link every list view with its details check out advcbv CRUD operations with CBVs 
+- check out advcbv project
